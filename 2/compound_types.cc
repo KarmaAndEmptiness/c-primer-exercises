@@ -55,4 +55,8 @@ int main()
 
     // 由于 void* 不知道指向的数据类型，它不能直接进行数据访问或操作。要访问存储在 void* 指针中的数据，我们必须先将它转换（cast）为具体类型的指针，然后才能进行解引用或操作
     // *pv=2;//不行，We cannot use a void* to operate on the object it addresses—we don’t know that object’s type, and the type determines what operations we can perform on the object.
+
+    // exercise
+    int *c = &temp, *&rc = c;
+    std::cout << *c << std::endl;
 }
