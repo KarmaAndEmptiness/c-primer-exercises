@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Sales_item.h"
+#include "../Sales_item.h"
 int main()
 {
     Sales_item total; // variable to hold data for the next transaction
