@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-
+#include <cctype> //Ordinarily, C++ programs should use the cname versions of headers and not the name.h versions.
 using std::cin;
 using std::cout;
 using std::endl;
@@ -30,6 +30,29 @@ int main()
     cout << "phrase > slang: " << (phrase > slang) << endl; //"Hiya"中的"i"比"Hello"中的"e"在字母表中位置靠后
     cout << "slang > test1: " << (slang > test1) << endl;
     cout << "slang > test2: " << (slang > test2) << endl;
+
+    cout << isdigit('12') << endl;
+
+    string s("Hello World!!!");
+    // punct_cnt has the same type that s.size returns; see § 2.5.3 (p. 70)
+    decltype(s.size()) punct_cnt = 0;
+    // count the number of punctuation characters in s
+    for (auto c : s)     // for every char in s
+        if (ispunct(c))  // if the character is punctuation
+            ++punct_cnt; // increment the punctuation counter
+    cout << punct_cnt
+         << " punctuation characters in " << s << endl;
+
+    string s3("some string");
+    if (!s3.empty())            // make sure there's a character in s3[0]
+        s3[0] = toupper(s3[0]); // assign a new value to the first character in s3
+    cout << "s3: " << s3 << endl;
+
+    // process characters in s until we run out of characters or we hit a whitespace
+    for (decltype(s3.size()) index = 0;
+         index != s3.size() && !isspace(s3[index]); ++index)
+        s3[index] = toupper(s3[index]); // capitalize the current character
+    cout << "s3: " << s3 << endl;
 
     // The string input operator reads and discards any leading whitespace (e.g., spaces, newlines, tabs). It then reads characters until the next whitespace character is encountered.
     // 读入直到遇到一个whitespace,打印接着读入下一个
