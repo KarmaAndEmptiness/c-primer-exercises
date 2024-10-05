@@ -8,6 +8,18 @@ using std::string;
 int main()
 {
 
+    const int n = 10;
+    // Ways to Initialize a string
+    string str1;           // Default initialization; str1 is the empty string.
+    string str2(str1);     //	str2 is a copy of str1.
+    string str3 = str1;    // Equivalent to str3(str1), str3 is a copy of str1
+    string str4("value");  // str4 is a copy of the string literal, not including the null.
+    string str5 = "value"; // Equivalent to str4("value"), str5 is a copy of the string literal.
+    string str6(n, 'c');   // Initialize str6 with n copies of the character 'c'.
+
+    string str7{"value"}; // Equivalent to str4("value")
+    string str8{n, 'c'};  // Equivalent to str6(n,'c')
+
     // When we mix strings and string or character literals, at least one operand to each + operator must be of string type.
     string s1 = "hello, ", s2 = "world\n";
     string s4 = s1 + ", "; // ok: adding a string and a literal
