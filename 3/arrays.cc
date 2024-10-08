@@ -151,6 +151,22 @@ int main()
          << "str_compare(s1,s3): " << str_compare(s1, s3) << endl
          << "str_compare(s1,s4): " << str_compare(s1, s4) << endl;
 
+    {
+        string s("some string");
+        const char temp[] = {' ', 'h', 'i', '\0'};
+        //  That is, it returns a pointer to the beginning of a null-terminated character array that holds the same data as the characters in the string.
+        const char *str = s.c_str(); // ok.The name c_str indicates that the function returns a C-style character string
+        s += temp;
+        cout << "s: " << s << endl;
+        // char *str = s; // error: can't initialize a char* from a string
+        cout << "str: " << str << endl;
+    }
+
+    // Using an Array to Initialize a vector
+    int int_arr[] = {0, 1, 2, 3, 4, 5};
+    // ivec has six elements; each is a copy of the corresponding element in int_arr
+    vector<int> ivec(begin(int_arr), end(int_arr));
+
     return 0;
 }
 
