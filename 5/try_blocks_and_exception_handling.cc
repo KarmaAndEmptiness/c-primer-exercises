@@ -37,15 +37,10 @@ int main()
     int c = 0;
     try
     {
-        cout << (a / c) << endl;
+        cout << (1 / 0) << endl;
     }
-    catch (const std::underflow_error &e)
+    catch (const std::runtime_error e)
     {
-        std::cerr << e.what() << '\n';
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << '\n';
     }
 
     // If no appropriate catch is found, execution is transferred to a library function named terminate.
