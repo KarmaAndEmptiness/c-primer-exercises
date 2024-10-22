@@ -1,16 +1,20 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <initializer_list>
 using std::cout;
 using std::endl;
+using std::initializer_list;
 using std::string;
+using std::vector;
 class LargeObject
 {
 public:
     int data[1000]; // 假设有一个很大的数组
 };
 // // the reference parameter occurs counts how often c occurs
-string::size_type find_char(const string &s, char c,
-                            string::size_type &occurs)
+string::size_type find_cchar(const string &s, char c,
+                             string::size_type &occurs)
 {
     auto ret = s.size(); // 将ret置于一个不可能是索引的位置，便于后面记录目标字符第一次出现的位置的索引 position of the first occurrence, if any
     occurs = 0;          // set the occurrence count parameter
@@ -25,7 +29,7 @@ string::size_type find_char(const string &s, char c,
     }
     return ret; // count is returned implicitly in occurs
 }
-int main()
+int main(int argc, char *argv[]) // argc接收的是option的个数，argv[0]是程序名，argv[1]及之后的存的是option字符串
 {
     // If the parameter is a reference, then the parameter is bound to its argument.
     void r_func(int &); // 它的形参接收一个左值
@@ -51,7 +55,7 @@ int main()
 
     string::size_type ctr = 0;
     string s = "hello,world";
-    cout << "find_char(s,'o',ctr): " << find_char(s, 'o', ctr) << "  ctr: " << ctr << endl;
+    cout << "find_char(s,'o',ctr): " << find_cchar(s, 'o', ctr) << "  ctr: " << ctr << endl;
 
     // Give an example of when a parameter should be a reference type. Give an example of when a parameter should not be a reference.
     // class LargeObject
@@ -73,7 +77,96 @@ int main()
     const int &rci = j;  // low-level const
     // int *pi = pci;       // error: types of pi and pci don't match
     // int &ri = rci; // error: types of ri and rci don't match
+
+    bool is_sentence(const string &);
+    cout << "is_sentence(\"hello,world.\"): " << is_sentence("hello,world.") << endl;
+    cout << "is_sentence(\"hello,world\"): " << is_sentence("hello,world") << endl;
+
+    // exercise
+    //  Write declarations for each of the following functions. When you write these declarations, use the name of the function to indicate what the function does.
+
+    // (a) A function named compare that returns a bool and has two parameters that are references to a class named matrix.
+    class maritx
+    {
+    };
+
+    bool compare(maritx &, maritx &);
+    // (b) A function named change_val that returns a vector<int> iterator and takes two parameters: One is an int and the other is an iterator for a vector<int>.
+    vector<int>::iterator change_val(int, vector<int>::iterator);
+
+    // despite appearances, these three declarations of print are equivalent
+    // each function has a single parameter of type const int*
+    void print(const int *);   // 一个指向int类型的元素的指针。传入函数的是数组的第一个元素的指针
+    void print(const int[]);   // shows the intent that the function takes an array
+    void print(const int[10]); // 这个函数只能传入一个size为10的int类型的数组 dimension for documentation purposes (at best)
+
+    // matrix points to the first element in an array whose elements are arrays of ten ints
+    void print(int(*matrix)[10], int rowSize); // 一个指针指向一个size为10的int类型的数组。 因为数组传入的是第一个元素的指针，所以二维数组传入的是它当中第一个数组的指针
+    // equivalent definition
+    void print(int matrix[][10], int rowSize);
+
+    // Functions with Varying Parameters
+    //  We can write a function that takes an unknown number of arguments of a single type by using an initializer_list parameter.
+    void error_msg(initializer_list<string> il); // Unlike vector, the elements in an initializer_list are always const values; there is no way to change the value of an element in an initializer_list.
+
+    error_msg({"a", "b"}); // When we pass a sequence of values to an initializer_list parameter, we must enclose the sequence in curly braces:
+
+    enum ErrCode
+    {
+
+    };
+    void error_msg(ErrCode e, initializer_list<string> il);
+
+    // Ellipsis Parameters
+    // Ellipsis parameters should be used only for types that are common to both C and C++. In particular, objects of most class types are not copied properly when passed to an ellipsis parameter.
+    // An ellipsis parameter may appear only as the last element in a parameter list and may take either of two forms:
+    using T = int;
+    void foo(/*parm_list*/ initializer_list<T>, ...); // 这里的pqrm_list只是举个例子
+    void foo(...);
+
     return 0;
+}
+void foo(...)
+{
+}
+
+void error_msg(initializer_list<string> il)
+{
+    for (auto beg = il.begin(); beg != il.end(); ++beg)
+        cout << *beg << " ";
+    cout << endl;
+}
+
+// ok: parameter is a reference to an array; the dimension is part of the type
+void print(int (&arr)[10])
+{
+    for (auto elem : arr)
+        cout << elem << endl;
+}
+string::size_type find_char(string &s, char c,
+                            string::size_type &occurs)
+{
+    auto ret = s.size(); // 将ret置于一个不可能是索引的位置，便于后面记录目标字符第一次出现的位置的索引 position of the first occurrence, if any
+    occurs = 0;          // set the occurrence count parameter
+    for (decltype(ret) i = 0; i != s.size(); ++i)
+    {
+        if (s[i] == c)
+        {
+            if (ret == s.size()) // 如果没有更改过，则记录该位置的索引
+                ret = i;         // remember the first occurrence of c
+            ++occurs;            // increment the occurrence count
+        }
+    }
+    return ret;
+}
+bool is_sentence(const string &s)
+{
+    // if there's a single period at the end of s, then s is a sentence
+    string::size_type ctr = 0;
+    string str = s;
+
+    // The right way to fix this problem is to fix the parameter in find_char. If it’s not possible to change find_char, then define a local string copy of s inside is_sentence and pass that string to find_char.
+    return find_char(str, '.', ctr) == s.size() - 1 && ctr == 1;
 }
 
 // In C++, we can define several different functions that have the same name. However, we can do so only if their parameter lists are sufficiently different.
