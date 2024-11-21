@@ -1,6 +1,8 @@
 #include <iostream>
+#include <string>
 using std::cout;
 using std::endl;
+using std::string;
 class Account
 {
 public:
@@ -16,11 +18,23 @@ private:
     // The keyword appears only with the declaration inside the class body
     static double interestRate;
     static double initRate();
+
+    static constexpr int period = 30; // period is a constant expression
+    double daily_tbl[period];
 };
+// If an initializer is provided inside the class, the member’s definition must not specify an initial value
+// definition of a static member with no initializer
+constexpr int Account::period; // initializer provided in the class definition
+
 //  When we define a static member outside the class, we do not repeat the static keyword. The keyword appears only with the declaration inside the class body
 void Account::rate(double newRate)
 {
     interestRate = newRate;
+}
+
+double Account::initRate()
+{
+    return 0;
 }
 
 // Once the class name is seen, the remainder of the definition is in the scope of the class. As a result, we can use initRate without qualification as the initializer for rate
@@ -45,13 +59,24 @@ public:
     // bkground refers to the static member
     // declared later in the class definition
     // Using a nonstatic data member as a default argument provides no object from which to obtain the member’s value and so is an error
+    //默认参数需要在编译时确定其值
     Screen &clear(char = bkground);
+    Screen &test(int = 1);
     // Screen &clear(char a = this->t);
 
 private:
     static const char bkground;
+
+    // we can provide in-class initializers for static members that have const integral type and must do so for static members that are constexprs of literal type
     // static char t = 'a';
     // static int a = 3;
+    static const int a = 3;
+    static constexpr int b = 2;
+    static const char t = 'a';
+    static constexpr char c = '1';
+    // static const double pi = 3.14;
+    static constexpr double pi = 3.14;
+    // static constexpr string hello = "hello";
 };
 // char Screen::t;
 // int Screen::a;
@@ -71,5 +96,9 @@ int main()
     r = ac1.rate();  // through an Account object or reference
     r = ac2->rate(); // through a pointer to an Account object
 
+    static int b = 0;
+
+    // static data members are defined outside any function
+    // double Account::interestRate = initRate();
     return 0;
 }
