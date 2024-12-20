@@ -28,15 +28,15 @@ class Foo
 private:
     HasPtr h;
 };
-inline void swap(Foo &lfoo, Foo &rfoo)
+inline void swap(Foo &lhs, Foo &rhs)
 {
     // WRONG: this function uses the library version of swap, not the HasPtr version
-    // std::swap(lfoo.h, rfoo.h);//这里是直接调用的std::swap
+    // std::swap(lhs.h, rhs.h);//这里是直接调用的std::swap
     // swap other members of type Foo
 
     using std::swap;
     // 这里调用的是HasPtrValueLike中的swap函数
-    swap(lfoo.h, rfoo.h); // uses the HasPtr version of swap
+    swap(lhs.h, rhs.h); // uses the HasPtr version of swap
     // swap other members of type Foo
 }
 // note rhs is passed by value, which means the HasPtr copy constructor
