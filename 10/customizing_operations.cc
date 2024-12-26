@@ -8,6 +8,7 @@ using std::endl;
 using std::ostream;
 using std::string;
 using std::vector;
+using namespace std::placeholders;
 
 bool isShorter(const string &s1, const string &s2)
 {
@@ -39,6 +40,42 @@ void biggies(vector<string> &words,
     for_each(words.begin(), words.end(),
              [&os, c](const string &s)
              { os << s << c; });
+
+    // os explicitly captured by reference; c implicitly captured by value
+    for_each(words.begin(), words.end(),
+             [=, &os](const string &s)
+             { os << s << c; });
+}
+
+void fcn3()
+{
+    size_t v1 = 42; // local variable
+    // f can change the value of the variables it captures
+    auto f = [v1]() mutable
+    { return ++v1; };
+    v1 = 0;
+    auto j = f(); // j is 43
+}
+
+// Whether a variable captured by reference can be changed (as usual) depends only on whether that reference refers to a const or nonconst type
+void fcn4()
+{
+    size_t v1 = 42; // local variable
+    // v1 is a reference to a non const variable
+    // we can change that variable through the reference inside f2
+    auto f2 = [&v1]
+    { return ++v1; };
+    v1 = 0;
+    auto j = f2(); // j is 1
+}
+bool check_size(const string &s, string::size_type sz)
+{
+    return s.size() >= sz;
+}
+
+ostream &print(ostream &os, const string &s, char c)
+{
+    return os << s << c;
 }
 int main()
 {
@@ -114,6 +151,36 @@ int main()
                  [](const string &s)
                  { cout << s << " "; });
         cout << endl;
+    }
+
+    {
+        vector<int> vi = {-1, -2, 3, -4, 5};
+
+        // error: cannot deduce the return type for the lambda
+        transform(vi.begin(), vi.end(), vi.begin(),
+                  [](int i)
+                  { if (i < 0) return -i; else return i; });
+
+        transform(vi.begin(), vi.end(), vi.begin(),
+                  [](int i) -> int
+                  { if (i < 0) return -i; else return i; });
+        for (auto &&i : vi)
+        {
+            cout << i << " ";
+        }
+        cout << endl;
+    }
+
+    {
+        // check6 is a callable object that takes one argument of type string
+        // and calls check_size on its given string and the value 6
+        auto check6 = bind(check_size, _1, 6);
+    }
+    {
+        ostream& os = cout;
+        // because bind copies its arguments and we cannot copy an ostream. If we want to pass an object to bind without copying it, we must use the library ref function
+        for_each(words.begin(), words.end(),
+                 bind(print, ref(os), _1, ' '));
     }
     return 0;
 }
